@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ArqueoTimes</string>
+    <string name="art_culos">Artículos</string>
+    <string name="cerrar">Cerrar</string>
+
+    <string name="article_image_content_description">Imagen destacada del artículo</string>
+
+</resources>

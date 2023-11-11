@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+> <!-- Fondo marrón claro -->
+
+    <TextView
+        android:id="@+id/articleTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:padding="16dp"
+        android:background="#562F0E"
+        android:textColor="#FFFFFF"/>
+
+    <TextView
+        android:id="@+id/articleAuthor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/articleTitle"
+        android:padding="12dp"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp"
+        android:textColor="#000000"/>
+
+    <WebView
+        android:id="@+id/articleWebView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/articleAuthor"
+        android:layout_marginTop="8dp"
+        android:padding="16dp"
+        android:scrollbars="none"
+        android:breakStrategy="simple" /> <!-- Establece breakStrategy en "simple" para permitir saltos de línea automáticos -->
+
+
+</RelativeLayout>
