@@ -20,7 +20,7 @@ class ArticlesActivity : AppCompatActivity() {
     private lateinit var articlesRecyclerView: RecyclerView
     private lateinit var articlesAdapter: ArticlesAdapter
     private var currentPage = 1
-    private val pageSize = 10 // Ajusta el tamaño de página según tus necesidades
+    private val pageSize = 5 // Ajusta el tamaño de página según tus necesidades
     private var isLoading = false
     private var isLastPage = false
 
@@ -38,7 +38,6 @@ class ArticlesActivity : AppCompatActivity() {
             finish() // Terminar esta actividad y volver a la anterior
         }
 
-        // Establecer el título del Toolbar aquí
         supportActionBar?.title = "Artículos"
 
         articlesRecyclerView = findViewById(R.id.articles_recycler_view)
@@ -51,7 +50,6 @@ class ArticlesActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         articlesRecyclerView.layoutManager = layoutManager
 
-        // Agregar un Listener de desplazamiento para manejar la paginación
         articlesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -74,9 +72,6 @@ class ArticlesActivity : AppCompatActivity() {
     }
 
     private fun loadArticles() {
-        // Resto del código para cargar la primera página de artículos
-        // ...
-
         currentPage = 1
         isLoading = true
         val retrofit = Retrofit.Builder()
@@ -88,11 +83,8 @@ class ArticlesActivity : AppCompatActivity() {
             override fun onResponse(call: Call<List<Article>>, response: Response<List<Article>>) {
                 isLoading = false
                 if (response.isSuccessful) {
-                    println("Cargados: ${response.body()}")
                     val articlesList = response.body() ?: emptyList()
                     articlesAdapter.setData(articlesList)
-
-                    // Incrementa el número de página para la próxima carga
                     currentPage++
                 } else {
                     println("Error de respuesta: ${response.errorBody()?.string()}")
@@ -111,10 +103,9 @@ class ArticlesActivity : AppCompatActivity() {
             return
         }
 
-        // Resto del código para cargar más páginas de artículos
-        // ...
-
         isLoading = true
+        articlesAdapter.addLoadingView() // Mostrar spinner de carga
+
         val retrofit = Retrofit.Builder()
             .baseUrl("https://www.arqueotimes.es/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -123,17 +114,13 @@ class ArticlesActivity : AppCompatActivity() {
         val apiService = retrofit.create(ApiService::class.java)
         apiService.getArticles(currentPage, pageSize).enqueue(object : Callback<List<Article>> {
             override fun onResponse(call: Call<List<Article>>, response: Response<List<Article>>) {
+                articlesAdapter.removeLoadingView() // Ocultar spinner de carga
                 isLoading = false
                 if (response.isSuccessful) {
-                    println("Cargados más artículos: ${response.body()}")
                     val articlesList = response.body() ?: emptyList()
                     articlesAdapter.addItems(articlesList)
-
-                    // Incrementa el número de página para la próxima carga
                     currentPage++
-
-                    // Verifica si es la última página
-                    if (articlesList.isEmpty() || articlesList.size < pageSize) {
+                    if (articlesList.size < pageSize) {
                         isLastPage = true
                     }
                 } else {
@@ -142,6 +129,7 @@ class ArticlesActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<List<Article>>, t: Throwable) {
+                articlesAdapter.removeLoadingView() // Ocultar spinner de carga
                 isLoading = false
                 println("Fallo en la llamada a la API: ${t.message}")
             }
